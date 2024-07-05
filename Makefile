@@ -16,12 +16,12 @@ get-deps:
 	go get -u google.golang.org/grpc/cmd/protoc-gen-go-grpc
 
 generate:
-	make generate-auth-api
+	make generate-chat-api
 
-generate-auth-api:
-	mkdir -p ./pkg/auth/v1
-	protoc --proto_path=./api/auth/v1 --go_out=./pkg/auth/v1 \
+generate-chat-api:
+	mkdir -p ./pkg/chat/v1
+	protoc --proto_path=./api/chat/v1 --go_out=./pkg/chat/v1 \
 	--go_opt=paths=source_relative --plugin=protoc-gen-go=./bin/protoc-gen-go \
-	--go-grpc_out=./pkg/auth/v1 --go-grpc_opt=paths=source_relative \
+	--go-grpc_out=./pkg/chat/v1 --go-grpc_opt=paths=source_relative \
 	--plugin=protoc-gen-go-grpc=./bin/protoc-gen-go-grpc \
-	./api/auth/v1/auth.proto
+	./api/chat/v1/chat.proto
