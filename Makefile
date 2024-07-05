@@ -1,3 +1,5 @@
+.PHONEY:
+.SILENT:
 
 LOCAL_BIN:=$(CURDIR)/bin
 
@@ -15,7 +17,7 @@ get-deps:
 	go get -u google.golang.org/protobuf/cmd/protoc-gen-go
 	go get -u google.golang.org/grpc/cmd/protoc-gen-go-grpc
 
-generate:
+generate: get-deps install-deps
 	make generate-chat-api
 
 generate-chat-api:
