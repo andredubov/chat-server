@@ -36,7 +36,6 @@ func (c *chatServer) SendMessage(ctx context.Context, r *chat_v1.SendMessageRequ
 }
 
 func (c *chatServer) Delete(ctx context.Context, r *chat_v1.DeleteRequest) (*empty.Empty, error) {
-
 	const op = "ChatServer.DeleteRequest"
 
 	log.Printf("%s: input = %+v", op, r)
