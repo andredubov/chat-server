@@ -18,7 +18,6 @@ func NewChatServer() chat_v1.ChatServer {
 }
 
 func (c *chatServer) Create(ctx context.Context, r *chat_v1.CreateRequest) (*chat_v1.CreateResponse, error) {
-
 	const op = "ChatServer.GreateRequest"
 
 	log.Printf("%s: input = %+v", op, r)
