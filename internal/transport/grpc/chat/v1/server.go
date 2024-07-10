@@ -28,7 +28,6 @@ func (c *chatServer) Create(ctx context.Context, r *chat_v1.CreateRequest) (*cha
 }
 
 func (c *chatServer) SendMessage(ctx context.Context, r *chat_v1.SendMessageRequest) (*empty.Empty, error) {
-
 	const op = "ChatServer.SendMessageRequest"
 
 	log.Printf("%s: input = %+v", op, r)
