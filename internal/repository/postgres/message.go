@@ -39,14 +39,16 @@ func (m *messagesRepository) Create(ctx context.Context, chatID, userID int64, m
 		log.Printf("%s: %v", op, err)
 		return 0, err
 	}
+
 	var messageID int64
+
 	err = m.pool.QueryRow(ctx, query, args...).Scan(&messageID)
 	if err != nil {
 		log.Printf("%s: %v", op, err)
 		return 0, err
 	}
 
-	return 0, nil
+	return messageID, nil
 }
 
 // Delete a message from the message repository
