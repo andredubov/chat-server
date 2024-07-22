@@ -1,11 +1,9 @@
 volumes:
-  chat_postgres_volume:
+  postgres-volume:
 services:
   postgres:
     image: postgres:14-alpine3.17
     container_name: chat-postgres
-    env_file:
-      - ./config/.env
     environment:
       - POSTGRES_HOST=${PG_HOST}
       - POSTGRES_PORT=${PG_PORT}
@@ -16,7 +14,7 @@ services:
     ports:
       - ${PG_PORT}:${PG_PORT}
     volumes:
-      - chat_postgres_volume:/var/lib/postgresql/data
+      - postgres-volume:/var/lib/postgresql/data
     healthcheck:
       test:
         [
