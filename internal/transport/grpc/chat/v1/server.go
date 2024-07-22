@@ -16,6 +16,7 @@ type chatServer struct {
 	messagesRepository repository.Messages
 }
 
+// NewChatServer returns an instance of charServer struct
 func NewChatServer(chatsRepo repository.Chats, messagesRepo repository.Messages) chat_v1.ChatServer {
 	return &chatServer{
 		chatsRepository:    chatsRepo,
