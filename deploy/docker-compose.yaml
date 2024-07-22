@@ -1,9 +1,9 @@
 volumes:
-  postgres-volume:
+  postgres_volume:
 services:
   postgres:
     image: ${POSTGRES_IMAGE}:${POSTGRES_TAG}
-    container_name: chat-postgres
+    container_name: chat_postgres
     environment:
       - POSTGRES_HOST=${PG_HOST}
       - POSTGRES_PORT=${PG_PORT}
@@ -14,7 +14,7 @@ services:
     ports:
       - ${PG_PORT}:${PG_PORT}
     volumes:
-      - postgres-volume:/var/lib/postgresql/data
+      - postgres_volume:/var/lib/postgresql/data
     healthcheck:
       test:
         [
@@ -29,7 +29,7 @@ services:
       - chatnet
   chat:
     image: ${CHAT_IMAGE}:${TAG}
-    container_name: chat-server
+    container_name: chat_server
     env_file:
       - ../config/.env
     ports:
@@ -42,7 +42,7 @@ services:
         ipv4_address: 172.19.0.4
   migrator:
     image: ${MIGRATOR_IMAGE}:${TAG}
-    container_name: chat-migrator
+    container_name: chat_migrator
     restart: on-failure
     env_file:
       - ../config/.env
