@@ -6,7 +6,6 @@ create table chats
     name     varchar(256) not null,
     user_ids int[]
 );
-
 create table messages
 (
     id      serial,
