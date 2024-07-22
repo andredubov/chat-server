@@ -1,0 +1,72 @@
+volumes:
+  chat_postgres_volume:
+services:
+  postgres:
+    image: postgres:14-alpine3.17
+    container_name: chat-postgres
+    env_file:
+      - ./config/.env
+    environment:
+      - POSTGRES_HOST=${PG_HOST}
+      - POSTGRES_PORT=${PG_PORT}
+      - POSTGRES_DB=${PG_DB}
+      - POSTGRES_USER=${PG_USER}
+      - POSTGRES_PASSWORD=${PG_PASSWORD}
+      - POSTGRES_SSL_MODE=${PG_SSL_MODE}
+    ports:
+      - ${PG_PORT}:${PG_PORT}
+    volumes:
+      - chat_postgres_volume:/var/lib/postgresql/data
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -q -U ${PG_USER} -d ${PG_DB}"
+        ]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 60s
+    networks:
+      - chatnet
+  chat:
+    image: chat-server
+    container_name: chat-server
+    build:
+      context: .
+      dockerfile: chat.Dockerfile
+    env_file:
+      - ./config/.env
+    environment:
+      - PG_HOST=postgres
+    ports:
+      - ${GRPC_PORT}:${GRPC_PORT}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      chatnet:
+        ipv4_address: 172.19.0.4
+  migrator:
+    image: chat-migrator
+    container_name: chat-migrator
+    build:
+      context: .
+      dockerfile: migrator.Dockerfile
+    restart: on-failure
+    env_file:
+      - ./config/.env
+    environment:
+      - PG_HOST=postgres
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - chatnet
+networks:
+  chatnet:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.19.0.0/16
+          gateway: 172.19.0.1
