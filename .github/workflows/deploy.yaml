@@ -1,0 +1,132 @@
+name: deploy
+on:
+  push:
+    tags: ['[0-9].[0-9]+.[0-9]+']
+env:
+    TAG: ${{ github.ref_name }}
+    CHAT_IMAGE: "andreidubov/chat-server"
+    MIGRATOR_IMAGE: "andreidubov/chat-migrator"
+    POSTGRES_IMAGE: "postgres"
+    POSTGRES_TAG: "14-alpine3.17"
+jobs:
+  lint:
+    name: lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.22'
+          cache: false
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v6
+        with:
+          version: v1.59
+          args: --timeout=30m --config=./.golangci.pipeline.yaml --issues-exit-code=0
+  test:
+    needs: [lint]
+    strategy:
+      matrix:
+        go-version: [1.21.x, 1.22.x]
+        platform: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.platform }}
+    steps:
+    - name: Install Go
+      uses: actions/setup-go@v5
+      with:
+        go-version: ${{ matrix.go-version }}
+        cache: false
+    - name: Checkout code
+      uses: actions/checkout@v4
+    - name: Test
+      run: go test ./...
+  publish:
+    needs: [test]
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    - name: Setup QEMU
+      uses: docker/setup-qemu-action@v3
+    - name: Setup Docker Buildx
+      uses: docker/setup-buildx-action@v3
+    - name: Lint auth Dockerfile
+      uses: hadolint/hadolint-action@v3.1.0
+      with:
+        dockerfile: ./auth.Dockerfile
+    - name: Lint migrator Dockerfile
+      uses: hadolint/hadolint-action@v3.1.0
+      with:
+        dockerfile: ./migrator.Dockerfile
+    - name: Login to DockerHub
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+    - name: Build and push auth docker image
+      uses: docker/build-push-action@v6
+      with:
+        context: .
+        file: ./chat.Dockerfile
+        push: true
+        tags: ${{ secrets.DOCKERHUB_USERNAME }}/chat-server:latest,
+              ${{ secrets.DOCKERHUB_USERNAME }}/chat-server:${{ github.ref_name }}
+    - name: Build and push migrator docker image
+      uses: docker/build-push-action@v6
+      with:
+        context: .
+        file: ./migrator.Dockerfile
+        push: true
+        tags: ${{ secrets.DOCKERHUB_USERNAME }}/chat-migrator:latest,
+              ${{ secrets.DOCKERHUB_USERNAME }}/chat-migrator:${{ github.ref_name }}
+  deploy:
+    needs: [publish]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: copy file via ssh password
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          source: "./deploy/docker-compose.yaml"
+          target: "chat"
+          strip_components: 1
+      - name: Deploy to Selectel Cloud via SSH action
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          envs: CHAT_IMAGE,MIGRATOR_IMAGE,POSTGRES_IMAGE,POSTGRES_TAG, TAG
+          script: | 
+            # Set env variables for the docker-compose file
+            export TAG=$(echo $TAG)
+            export CHAT_IMAGE=$(echo $CHAT_IMAGE)
+            export MIGRATOR_IMAGE=$(echo $MIGRATOR_IMAGE)
+            export POSTGRES_IMAGE=$(echo $POSTGRES_IMAGE)
+            export POSTGRES_TAG=$(echo $POSTGRES_TAG)
+
+            # Create .env file
+            mkdir -p ./chat/config
+            echo "CHAT_VERSION=${{ github.ref_name }}" > ./chat/config/.env
+            echo "PG_HOST=${{ secrets.POSTGRES_HOST }}" >> ./chat/config/.env
+            echo "PG_PORT=${{ secrets.POSTGRES_PORT }}" >> ./chat/config/.env
+            echo "PG_DB=${{ secrets.POSTGRES_DB }}" >> ./chat/config/.env
+            echo "PG_USER=${{ secrets.POSTGRES_USER }}" >> ./chat/config/.env
+            echo "PG_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> ./chat/config/.env
+            echo "PG_SSL_MODE=${{ secrets.POSTGRES_SSL_MODE }}" >> ./chat/config/.env
+            echo "MIGRATION_DIR=${{ secrets.MIGRATION_DIR }}" >> ./chat/config/.env
+            echo "GRPC_HOST=${{ secrets.GRPC_HOST }}" >> ./chat/config/.env
+            echo "GRPC_PORT=${{ secrets.GRPC_PORT }}" >> ./chat/config/.env
+
+            # Login into DockerHub
+            # echo ${{ secrets.DOCKERHUB_TOKEN }} | docker login --username ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
+
+            # Run a new container from a new image
+            cd ./chat
+            docker-compose -f ./deploy/docker-compose.yaml --env-file ./config/.env stop
+            docker-compose -f ./deploy/docker-compose.yaml --env-file ./config/.env rm -f
+            docker-compose -f ./deploy/docker-compose.yaml --env-file ./config/.env build migrator chat
+            docker-compose -f ./deploy/docker-compose.yaml --env-file ./config/.env up -d --force-recreate postgres migrator chat
