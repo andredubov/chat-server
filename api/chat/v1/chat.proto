@@ -4,7 +4,6 @@ package chat_v1;
 
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/empty.proto";
-import "google/protobuf/wrappers.proto";
 
 option go_package = "github.com/andredubov/chat-server/pkg/chat/v1;chat_v1";
 
