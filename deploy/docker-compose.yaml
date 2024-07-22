@@ -28,7 +28,7 @@ services:
     networks:
       - chatnet
   chat:
-    image: ${AUTH_IMAGE}:${TAG}
+    image: ${CHAT_IMAGE}:${TAG}
     container_name: chat-server
     env_file:
       - ../config/.env
