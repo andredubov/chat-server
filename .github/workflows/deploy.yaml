@@ -50,10 +50,10 @@ jobs:
       uses: docker/setup-qemu-action@v3
     - name: Setup Docker Buildx
       uses: docker/setup-buildx-action@v3
-    - name: Lint auth Dockerfile
+    - name: Lint chat-server Dockerfile
       uses: hadolint/hadolint-action@v3.1.0
       with:
-        dockerfile: ./auth.Dockerfile
+        dockerfile: ./chat.Dockerfile
     - name: Lint migrator Dockerfile
       uses: hadolint/hadolint-action@v3.1.0
       with:
