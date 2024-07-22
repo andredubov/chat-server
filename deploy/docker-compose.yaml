@@ -16,11 +16,7 @@ services:
     volumes:
       - postgres_volume:/var/lib/postgresql/data
     healthcheck:
-      test:
-        [
-          "CMD-SHELL",
-          "pg_isready -q -U ${PG_USER} -d ${PG_DB}"
-        ]
+      test: [ "CMD-SHELL", "pg_isready -q -U ${PG_USER} -d ${PG_DB}" ]
       interval: 5s
       timeout: 3s
       retries: 10
@@ -39,7 +35,7 @@ services:
         condition: service_healthy
     networks:
       chatnet:
-        ipv4_address: 172.19.0.4
+        ipv4_address: 172.20.0.4
   migrator:
     image: ${MIGRATOR_IMAGE}:${TAG}
     container_name: chat_migrator
@@ -56,5 +52,5 @@ networks:
     driver: bridge
     ipam:
       config:
-        - subnet: 172.19.0.0/16
-          gateway: 172.19.0.1
+        - subnet: 172.20.0.0/16
+          gateway: 172.20.0.1
