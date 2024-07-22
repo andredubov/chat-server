@@ -1,0 +1,60 @@
+volumes:
+  postgres-volume:
+services:
+  postgres:
+    image: ${POSTGRES_IMAGE}:${POSTGRES_TAG}
+    container_name: chat-postgres
+    environment:
+      - POSTGRES_HOST=${PG_HOST}
+      - POSTGRES_PORT=${PG_PORT}
+      - POSTGRES_DB=${PG_DB}
+      - POSTGRES_USER=${PG_USER}
+      - POSTGRES_PASSWORD=${PG_PASSWORD}
+      - POSTGRES_SSL_MODE=${PG_SSL_MODE}
+    ports:
+      - ${PG_PORT}:${PG_PORT}
+    volumes:
+      - postgres-volume:/var/lib/postgresql/data
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -q -U ${PG_USER} -d ${PG_DB}"
+        ]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 60s
+    networks:
+      - chatnet
+  chat:
+    image: ${AUTH_IMAGE}:${TAG}
+    container_name: chat-server
+    env_file:
+      - ../config/.env
+    ports:
+      - ${GRPC_PORT}:${GRPC_PORT}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      chatnet:
+        ipv4_address: 172.19.0.4
+  migrator:
+    image: ${MIGRATOR_IMAGE}:${TAG}
+    container_name: chat-migrator
+    restart: on-failure
+    env_file:
+      - ../config/.env
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - chatnet
+networks:
+  chatnet:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.19.0.0/16
+          gateway: 172.19.0.1
