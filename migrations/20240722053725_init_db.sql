@@ -13,6 +13,7 @@ create table messages
     chat_id int references chats (id) on delete cascade,
     user_id int not null,
     text    text,
+    created_at timestamp not null default now(),
     primary key (id, chat_id)
 );
 -- +goose StatementEnd
