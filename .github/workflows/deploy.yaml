@@ -54,7 +54,7 @@ jobs:
       uses: hadolint/hadolint-action@v3.1.0
       with:
         dockerfile: ./chat.Dockerfile
-    - name: Lint migrator Dockerfile
+    - name: Lint chat-migrator Dockerfile
       uses: hadolint/hadolint-action@v3.1.0
       with:
         dockerfile: ./migrator.Dockerfile
@@ -99,7 +99,7 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_KEY }}
-          envs: CHAT_IMAGE,MIGRATOR_IMAGE,POSTGRES_IMAGE,POSTGRES_TAG, TAG
+          envs: CHAT_IMAGE,MIGRATOR_IMAGE,POSTGRES_IMAGE,POSTGRES_TAG,TAG
           script: | 
             # Set env variables for the docker-compose file
             export TAG=$(echo $TAG)
@@ -113,7 +113,7 @@ jobs:
             echo "CHAT_VERSION=${{ github.ref_name }}" > ./chat/config/.env
             echo "PG_HOST=${{ secrets.POSTGRES_HOST }}" >> ./chat/config/.env
             echo "PG_PORT=${{ secrets.POSTGRES_PORT }}" >> ./chat/config/.env
-            echo "PG_PORT_OUT=${{ secrets.POSTGRES_PORT_OUT }}" >> ./auth/config/.env
+            echo "PG_PORT_OUT=${{ secrets.POSTGRES_PORT_OUT }}" >> ./chat/config/.env
             echo "PG_DB=${{ secrets.POSTGRES_DB }}" >> ./chat/config/.env
             echo "PG_USER=${{ secrets.POSTGRES_USER }}" >> ./chat/config/.env
             echo "PG_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> ./chat/config/.env
