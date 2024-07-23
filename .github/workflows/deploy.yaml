@@ -127,7 +127,7 @@ jobs:
 
             # Run a new container from a new image
             cd ./chat
-            docker-compose -f ./deploy/docker-compose.yaml --env-file ./config/.env stop migrator chat
-            docker-compose -f ./deploy/docker-compose.yaml --env-file ./config/.env rm -f migrator chat
-            docker-compose -f ./deploy/docker-compose.yaml --env-file ./config/.env build migrator chat
-            docker-compose -f ./deploy/docker-compose.yaml --env-file ./config/.env up -d --force-recreate migrator chat
+            docker compose -f ./deploy/docker-compose.yaml --env-file ./config/.env stop migrator chat
+            docker compose -f ./deploy/docker-compose.yaml --env-file ./config/.env rm -f migrator chat
+            docker compose -f ./deploy/docker-compose.yaml --env-file ./config/.env build migrator chat
+            docker compose -f ./deploy/docker-compose.yaml --env-file ./config/.env up -d --force-recreate migrator chat
