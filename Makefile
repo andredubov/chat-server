@@ -35,8 +35,8 @@ generate-chat-api:
 local-docker-compose-up:
 	docker-compose --env-file ./config/.env stop
 	docker-compose --env-file ./config/.env rm -f
-	docker-compose --env-file ./config/.env build chat migrator 
-	docker-compose --env-file ./config/.env up --force-recreate -d postgres chat migrator
+	docker-compose --env-file ./config/.env build migrator chat
+	docker-compose --env-file ./config/.env up --force-recreate -d postgres migrator chat
 
 build:
 	go build -o ./bin/auth ./cmd/chat/main.go
