@@ -113,6 +113,7 @@ jobs:
             echo "CHAT_VERSION=${{ github.ref_name }}" > ./chat/config/.env
             echo "PG_HOST=${{ secrets.POSTGRES_HOST }}" >> ./chat/config/.env
             echo "PG_PORT=${{ secrets.POSTGRES_PORT }}" >> ./chat/config/.env
+            echo "PG_PORT_OUT=${{ secrets.POSTGRES_PORT_OUT }}" >> ./auth/config/.env
             echo "PG_DB=${{ secrets.POSTGRES_DB }}" >> ./chat/config/.env
             echo "PG_USER=${{ secrets.POSTGRES_USER }}" >> ./chat/config/.env
             echo "PG_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> ./chat/config/.env
