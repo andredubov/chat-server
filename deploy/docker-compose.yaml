@@ -1,5 +1,5 @@
 volumes:
-  postgres_volume:
+  chat_server_postgres_volume:
 services:
   postgres:
     image: ${POSTGRES_IMAGE}:${POSTGRES_TAG}
@@ -11,7 +11,7 @@ services:
     ports:
       - ${PG_PORT_OUT}:${PG_PORT}
     volumes:
-      - postgres_volume:/var/lib/postgresql/data
+      - chat_server_postgres_volume:/var/lib/postgresql/data
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -q -U ${PG_USER} -d ${PG_DB}" ]
       interval: 5s
