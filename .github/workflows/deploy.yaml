@@ -63,7 +63,7 @@ jobs:
       with:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
-    - name: Build and push auth docker image
+    - name: Build and push chat docker image
       uses: docker/build-push-action@v6
       with:
         context: .
@@ -127,10 +127,10 @@ jobs:
 
             # Run a new container from a new image
             cd ./chat
-           	docker compose ./deploy/docker-compose.yaml --env-file ./config/.env stop chat-migrator 
-            docker compose ./deploy/docker-compose.yaml --env-file ./config/.env stop chat-server
-            docker compose ./deploy/docker-compose.yaml --env-file ./config/.env rm -f chat-migrator
-            docker compose ./deploy/docker-compose.yaml --env-file ./config/.env rm -f chat-sever
-            docker compose ./deploy/docker-compose.yaml --env-file ./config/.env build chat-migrator 
-            docker compose ./deploy/docker-compose.yaml --env-file ./config/.env build chat-sever
-            docker compose ./deploy/docker-compose.yaml --env-file ./config/.env up --force-recreate -d
+            docker compose -f ./deploy/docker-compose.yaml --env-file ./config/.env stop chat-migrator
+            docker compose -f ./deploy/docker-compose.yaml --env-file ./config/.env stop chat-server
+            docker compose -f ./deploy/docker-compose.yaml --env-file ./config/.env rm -f chat-migrator
+            docker compose -f ./deploy/docker-compose.yaml --env-file ./config/.env rm -f chat-server
+            docker compose -f ./deploy/docker-compose.yaml --env-file ./config/.env build chat-migrator 
+            docker compose -f ./deploy/docker-compose.yaml --env-file ./config/.env build chat-server
+            docker compose -f ./deploy/docker-compose.yaml --env-file ./config/.env up --force-recreate -d
