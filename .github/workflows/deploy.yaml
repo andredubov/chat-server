@@ -99,7 +99,7 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_KEY }}
-          envs: CHAT_IMAGE,MIGRATOR_IMAGE,POSTGRES_IMAGE,POSTGRES_TAG,TAG
+          envs: CHAT_IMAGE,MIGRATOR_IMAGE,POSTGRES_IMAGE,POSTGRES_TAG, TAG
           script: | 
             # Set env variables for the docker-compose file
             export TAG=$(echo $TAG)
