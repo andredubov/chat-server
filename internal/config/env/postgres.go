@@ -27,36 +27,34 @@ type postgresConfig struct {
 
 // NewPostgresConfig returns an intance of postgresConfig struct
 func NewPostgresConfig() (config.PostgresConfig, error) {
-	const op = "env.NewPostgresConfig"
-
 	host := os.Getenv(hostEnvName)
 	if len(host) == 0 {
-		return nil, fmt.Errorf("%s: %s", op, "postgres host not found")
+		return nil, fmt.Errorf("%s", "postgres host not found")
 	}
 
 	port := os.Getenv(portEnvName)
 	if len(port) == 0 {
-		return nil, fmt.Errorf("%s: %s", op, "postgres port not found")
+		return nil, fmt.Errorf("%s", "postgres port not found")
 	}
 
 	dbname := os.Getenv(dbnameEnvName)
 	if len(port) == 0 {
-		return nil, fmt.Errorf("%s: %s", op, "postgres database name not found")
+		return nil, fmt.Errorf("%s", "postgres database name not found")
 	}
 
 	user := os.Getenv(userEnvName)
 	if len(port) == 0 {
-		return nil, fmt.Errorf("%s: %s", op, "postgres user not found")
+		return nil, fmt.Errorf("%s", "postgres user not found")
 	}
 
 	password := os.Getenv(passwordEnvName)
 	if len(port) == 0 {
-		return nil, fmt.Errorf("%s: %s", op, "postgres password not found")
+		return nil, fmt.Errorf("%s", "postgres password not found")
 	}
 
 	sslmode := os.Getenv(sslmodeEnvName)
 	if len(port) == 0 {
-		return nil, fmt.Errorf("%s: %s", op, "postgres ssl mode not found")
+		return nil, fmt.Errorf("%s", "postgres ssl mode not found")
 	}
 
 	return &postgresConfig{
