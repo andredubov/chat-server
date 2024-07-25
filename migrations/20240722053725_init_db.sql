@@ -4,7 +4,7 @@ create table chats
 (
     id       serial primary key,
     name     text not null,
-    user_ids int[]
+    users_ids int[]
 );
 create table messages
 (
