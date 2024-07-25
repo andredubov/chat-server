@@ -3,7 +3,7 @@
 create table chats
 (
     id       serial primary key,
-    name     varchar(256) not null,
+    name     text not null,
     user_ids int[]
 );
 create table messages
