@@ -36,9 +36,9 @@ local-docker-compose-up:
 	docker compose --env-file ./config/.env stop chat-migrator 
 	docker compose --env-file ./config/.env stop chat-server
 	docker compose --env-file ./config/.env rm -f chat-migrator
-	docker compose --env-file ./config/.env rm -f chat-sever
+	docker compose --env-file ./config/.env rm -f chat-server
 	docker compose --env-file ./config/.env build chat-migrator 
-	docker compose --env-file ./config/.env build chat-sever
+	docker compose --env-file ./config/.env build chat-server
 	docker compose --env-file ./config/.env up --force-recreate -d
 
 build:
