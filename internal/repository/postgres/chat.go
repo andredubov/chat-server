@@ -2,7 +2,6 @@ package postgres
 
 import (
 	"context"
-	"log"
 
 	sq "github.com/Masterminds/squirrel"
 	"github.com/andredubov/chat-server/internal/repository"
@@ -10,7 +9,10 @@ import (
 )
 
 const (
-	chatsTable = "chats"
+	chatsTable               = "chats"
+	idChatsTableColumn       = "id"
+	nameChatsTableColumn     = "name"
+	usersidsChatsTableColumn = "users_ids"
 )
 
 type chatsRepository struct {
@@ -26,16 +28,13 @@ func NewChatsRepository(pool *pgxpool.Pool) repository.Chats {
 
 // Create a new chat in the chat repository
 func (c *chatsRepository) Create(ctx context.Context, name string, usersIDs []int64) (int64, error) {
-	const op = "chatsRepository.Create"
-
 	insertBuilder := sq.Insert(chatsTable).PlaceholderFormat(sq.Dollar).
-		Columns("name", "user_ids").
+		Columns(nameChatsTableColumn, usersidsChatsTableColumn).
 		Values(name, usersIDs).
 		Suffix("RETURNING id")
 
 	query, args, err := insertBuilder.ToSql()
 	if err != nil {
-		log.Printf("%s: %v", op, err)
 		return 0, err
 	}
 
@@ -43,7 +42,6 @@ func (c *chatsRepository) Create(ctx context.Context, name string, usersIDs []in
 
 	err = c.pool.QueryRow(ctx, query, args...).Scan(&chatID)
 	if err != nil {
-		log.Printf("%s: %v", op, err)
 		return 0, err
 	}
 
@@ -52,21 +50,17 @@ func (c *chatsRepository) Create(ctx context.Context, name string, usersIDs []in
 
 // Delete a chat from the chat repository
 func (c *chatsRepository) Delete(ctx context.Context, chatID int64) (int64, error) {
-	const op = "chatsRepository.Delete"
-
 	deleteBuilder := sq.Delete(chatsTable).
 		PlaceholderFormat(sq.Dollar).
-		Where(sq.Eq{"id": chatID})
+		Where(sq.Eq{idChatsTableColumn: chatID})
 
 	query, args, err := deleteBuilder.ToSql()
 	if err != nil {
-		log.Printf("%s: %v", op, err)
 		return 0, nil
 	}
 
 	result, err := c.pool.Exec(ctx, query, args...)
 	if err != nil {
-		log.Printf("%s: %v", op, err)
 		return 0, err
 	}
 
