@@ -11,8 +11,8 @@ import (
 const (
 	messagesTable              = "messages"
 	idMessagesTableColumn      = "id"
-	chatIdMessagesTableColumn  = "chat_id"
-	userIdMessagesTableColumn  = "user_id"
+	chatIDMessagesTableColumn  = "chat_id"
+	userIDMessagesTableColumn  = "user_id"
 	messageMessagesTableColumn = "text"
 )
 
@@ -31,7 +31,7 @@ func NewMessagesRepository(pool *pgxpool.Pool) repository.Messages {
 func (m *messagesRepository) Create(ctx context.Context, chatID, userID int64, message string) (int64, error) {
 	builderInsert := sq.Insert(messagesTable).
 		PlaceholderFormat(sq.Dollar).
-		Columns(chatIdMessagesTableColumn, userIdMessagesTableColumn, messageMessagesTableColumn).
+		Columns(chatIDMessagesTableColumn, userIDMessagesTableColumn, messageMessagesTableColumn).
 		Values(chatID, userID, message).
 		Suffix("RETURNING id")
 
