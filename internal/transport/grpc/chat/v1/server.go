@@ -2,43 +2,73 @@ package server
 
 import (
 	"context"
-	"log"
 
+	"github.com/andredubov/chat-server/internal/repository"
 	chat_v1 "github.com/andredubov/chat-server/pkg/chat/v1"
 	"github.com/golang/protobuf/ptypes/empty"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type chatServer struct {
 	chat_v1.UnimplementedChatServer
+	chatsRepository        repository.Chats
+	messagesRepository     repository.Messages
+	participantsRepository repository.Participants
 }
 
-func NewChatServer() chat_v1.ChatServer {
-
-	return &chatServer{}
+// NewChatServer returns an instance of charServer struct
+func NewChatServer(
+	chatsRepo repository.Chats,
+	messagesRepo repository.Messages,
+	participantsRepo repository.Participants,
+) chat_v1.ChatServer {
+	return &chatServer{
+		chatsRepository:        chatsRepo,
+		messagesRepository:     messagesRepo,
+		participantsRepository: participantsRepo,
+	}
 }
 
 func (c *chatServer) Create(ctx context.Context, r *chat_v1.CreateRequest) (*chat_v1.CreateResponse, error) {
-	const op = "ChatServer.GreateRequest"
+	if r.GetName() == "" {
+		return nil, status.Error(codes.InvalidArgument, "chat name cannot be empty")
+	}
 
-	log.Printf("%s: input = %+v", op, r)
+	chatID, err := c.chatsRepository.Create(ctx, r.GetName())
+	if err != nil {
+		return nil, status.Error(codes.Internal, "cannot add a new chat")
+	}
+
+	for _, userID := range r.GetUserIds() {
+		_, err := c.participantsRepository.Create(ctx, chatID, userID)
+		if err != nil {
+			return nil, status.Error(codes.Internal, "cannot add a new chat participant")
+		}
+	}
 
 	return &chat_v1.CreateResponse{
-		Id: 1,
+		Id: chatID,
 	}, nil
 }
 
-func (c *chatServer) SendMessage(ctx context.Context, r *chat_v1.SendMessageRequest) (*empty.Empty, error) {
-	const op = "ChatServer.SendMessageRequest"
+func (c *chatServer) Delete(ctx context.Context, r *chat_v1.DeleteRequest) (*empty.Empty, error) {
+	_, err := c.chatsRepository.Delete(ctx, r.GetId())
+	if err != nil {
+		return nil, status.Error(codes.Internal, "cannot delete a chat")
+	}
 
-	log.Printf("%s: input = %+v", op, r)
-
-	return nil, nil
+	return &empty.Empty{}, nil
 }
 
-func (c *chatServer) Delete(ctx context.Context, r *chat_v1.DeleteRequest) (*empty.Empty, error) {
-	const op = "ChatServer.DeleteRequest"
+func (c *chatServer) SendMessage(ctx context.Context, r *chat_v1.SendMessageRequest) (*chat_v1.SendMessageResponse, error) {
+	messageID, err := c.messagesRepository.Create(ctx, r.GetToChatId(), r.GetFromUserId(), r.GetMessage())
+	if err != nil {
+		return nil, status.Error(codes.Internal, "cannot add chat message")
+	}
 
-	log.Printf("%s: input = %+v", op, r)
-
-	return nil, nil
+	return &chat_v1.SendMessageResponse{
+		Id:     messageID,
+		ChatId: r.GetToChatId(),
+	}, nil
 }
