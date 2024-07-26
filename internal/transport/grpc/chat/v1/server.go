@@ -12,15 +12,21 @@ import (
 
 type chatServer struct {
 	chat_v1.UnimplementedChatServer
-	chatsRepository    repository.Chats
-	messagesRepository repository.Messages
+	chatsRepository        repository.Chats
+	messagesRepository     repository.Messages
+	participantsRepository repository.Participants
 }
 
 // NewChatServer returns an instance of charServer struct
-func NewChatServer(chatsRepo repository.Chats, messagesRepo repository.Messages) chat_v1.ChatServer {
+func NewChatServer(
+	chatsRepo repository.Chats,
+	messagesRepo repository.Messages,
+	participantsRepo repository.Participants,
+) chat_v1.ChatServer {
 	return &chatServer{
-		chatsRepository:    chatsRepo,
-		messagesRepository: messagesRepo,
+		chatsRepository:        chatsRepo,
+		messagesRepository:     messagesRepo,
+		participantsRepository: participantsRepo,
 	}
 }
 
@@ -29,9 +35,16 @@ func (c *chatServer) Create(ctx context.Context, r *chat_v1.CreateRequest) (*cha
 		return nil, status.Error(codes.InvalidArgument, "chat name cannot be empty")
 	}
 
-	chatID, err := c.chatsRepository.Create(ctx, r.GetName(), r.GetUserIds())
+	chatID, err := c.chatsRepository.Create(ctx, r.GetName())
 	if err != nil {
 		return nil, status.Error(codes.Internal, "cannot add a new chat")
+	}
+
+	for _, userID := range r.GetUserIds() {
+		_, err := c.participantsRepository.Create(ctx, chatID, userID)
+		if err != nil {
+			return nil, status.Error(codes.Internal, "cannot add a new chat participant")
+		}
 	}
 
 	return &chat_v1.CreateResponse{
