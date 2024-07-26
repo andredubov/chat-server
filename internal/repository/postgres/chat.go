@@ -27,10 +27,10 @@ func NewChatsRepository(pool *pgxpool.Pool) repository.Chats {
 }
 
 // Create a new chat in the chat repository
-func (c *chatsRepository) Create(ctx context.Context, name string, usersIDs []int64) (int64, error) {
+func (c *chatsRepository) Create(ctx context.Context, name string) (int64, error) {
 	insertBuilder := sq.Insert(chatsTable).PlaceholderFormat(sq.Dollar).
-		Columns(nameChatsTableColumn, usersidsChatsTableColumn).
-		Values(name, usersIDs).
+		Columns(nameChatsTableColumn).
+		Values(name).
 		Suffix("RETURNING id")
 
 	query, args, err := insertBuilder.ToSql()
