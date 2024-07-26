@@ -38,15 +38,22 @@ func main() {
 
 	chatsRepository := postgres.NewChatsRepository(connection)
 	messagesRepository := postgres.NewMessagesRepository(connection)
+	chatParticipantsRepository := postgres.NewParticipantsRepository(connection)
 
 	listen, err := net.Listen("tcp", grpcConfig.Address())
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
 
+	chatServer := server.NewChatServer(
+		chatsRepository,
+		messagesRepository,
+		chatParticipantsRepository,
+	)
+
 	s := grpc.NewServer()
 	reflection.Register(s)
-	chat_v1.RegisterChatServer(s, server.NewChatServer(chatsRepository, messagesRepository))
+	chat_v1.RegisterChatServer(s, chatServer)
 
 	log.Printf("server listening at %v", listen.Addr())
 
