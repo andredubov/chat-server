@@ -16,10 +16,14 @@ func (c *chatsService) Create(ctx context.Context, chat model.Chat) (int64, erro
 
 		for _, userID := range chat.UserIDs {
 			participant := model.Participant{
-				ChatID: chat.ID,
+				ChatID: chatID,
 				UserID: userID,
 			}
-			c.participantsRepository.Create(ctx, participant)
+
+			_, errTx = c.participantsRepository.Create(ctx, participant)
+			if errTx != nil {
+				return errTx
+			}
 		}
 
 		return nil
