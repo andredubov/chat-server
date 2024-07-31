@@ -5,14 +5,15 @@ import (
 
 	sq "github.com/Masterminds/squirrel"
 	"github.com/andredubov/chat-server/internal/client/database"
+	"github.com/andredubov/chat-server/internal/service/model"
 )
 
 // Create a new message in the message repository
-func (m *messagesRepository) Create(ctx context.Context, chatID, userID int64, message string) (int64, error) {
+func (m *messagesRepository) Create(ctx context.Context, message model.Message) (int64, error) {
 	builderInsert := sq.Insert(messagesTable).
 		PlaceholderFormat(sq.Dollar).
 		Columns(chatIDMessagesTableColumn, userIDMessagesTableColumn, messageMessagesTableColumn).
-		Values(chatID, userID, message).
+		Values(message.ToChatID, message.FromUserID, message.Text).
 		Suffix("RETURNING id")
 
 	query, args, err := builderInsert.ToSql()

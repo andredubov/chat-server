@@ -5,13 +5,14 @@ import (
 
 	sq "github.com/Masterminds/squirrel"
 	"github.com/andredubov/chat-server/internal/client/database"
+	"github.com/andredubov/chat-server/internal/service/model"
 )
 
 // Create a new chat in the chat repository
-func (c *chatsRepository) Create(ctx context.Context, name string) (int64, error) {
+func (c *chatsRepository) Create(ctx context.Context, chat model.Chat) (int64, error) {
 	insertBuilder := sq.Insert(chatsTable).PlaceholderFormat(sq.Dollar).
 		Columns(nameChatsTableColumn).
-		Values(name).
+		Values(chat.Name).
 		Suffix("RETURNING id")
 
 	query, args, err := insertBuilder.ToSql()

@@ -2,22 +2,24 @@ package repository
 
 import (
 	"context"
+
+	"github.com/andredubov/chat-server/internal/service/model"
 )
 
-// Chats provide inteface for chats repository
+// Chats defines inteface for chats repository
 type Chats interface {
-	Create(ctx context.Context, name string) (int64, error)
+	Create(ctx context.Context, chat model.Chat) (int64, error)
 	Delete(ctx context.Context, chatID int64) (int64, error)
 }
 
-// Messages provide inteface for message repository
+// Messages defines inteface for message repository
 type Messages interface {
-	Create(ctx context.Context, chatID, userID int64, message string) (int64, error)
+	Create(ctx context.Context, message model.Message) (int64, error)
 	Delete(ctx context.Context, messageID int64) (int64, error)
 }
 
-// Participants provide inteface for participans repository
+// Participants defines inteface for participans repository
 type Participants interface {
-	Create(ctx context.Context, chatID, userID int64) (int64, error)
+	Create(ctx context.Context, participant model.Participant) (int64, error)
 	Delete(ctx context.Context, participantID int64) (int64, error)
 }

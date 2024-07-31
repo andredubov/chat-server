@@ -5,13 +5,14 @@ import (
 
 	sq "github.com/Masterminds/squirrel"
 	"github.com/andredubov/chat-server/internal/client/database"
+	"github.com/andredubov/chat-server/internal/service/model"
 )
 
-func (p *participantsRepository) Create(ctx context.Context, chatID, userID int64) (int64, error) {
+func (p *participantsRepository) Create(ctx context.Context, participant model.Participant) (int64, error) {
 	builderInsert := sq.Insert(participantsTable).
 		PlaceholderFormat(sq.Dollar).
 		Columns(chatIDParticipantsTableColumn, userIDParticipantsTableColumn).
-		Values(chatID, userID).
+		Values(participant.ChatID, participant.UserID).
 		Suffix("RETURNING id")
 
 	query, args, err := builderInsert.ToSql()
