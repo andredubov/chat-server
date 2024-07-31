@@ -15,8 +15,8 @@ type chatsRepository struct {
 	dbClient database.Client
 }
 
-// NewUsersRepository create an instance of the usersRepository struct
-func NewUsersRepository(dbClient database.Client) repository.Chats {
+// NewChatsRepository create an instance of the usersRepository struct
+func NewChatsRepository(dbClient database.Client) repository.Chats {
 	return &chatsRepository{
 		dbClient,
 	}
