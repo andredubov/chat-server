@@ -7,6 +7,7 @@ import (
 	"github.com/andredubov/chat-server/internal/client/database"
 )
 
+// Delete is used to deletes a chat participants in the appropriate repository
 func (p *participantsRepository) Delete(ctx context.Context, participantID int64) (int64, error) {
 	deleteBuilder := sq.Delete(participantsTable).
 		PlaceholderFormat(sq.Dollar).

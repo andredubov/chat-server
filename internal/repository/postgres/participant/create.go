@@ -8,6 +8,7 @@ import (
 	"github.com/andredubov/chat-server/internal/service/model"
 )
 
+// Create is used to creates a new chat participants in the appropriate repository
 func (p *participantsRepository) Create(ctx context.Context, participant model.Participant) (int64, error) {
 	builderInsert := sq.Insert(participantsTable).
 		PlaceholderFormat(sq.Dollar).
