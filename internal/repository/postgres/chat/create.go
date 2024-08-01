@@ -20,10 +20,12 @@ func (c *chatsRepository) Create(ctx context.Context, chat model.Chat) (int64, e
 		return 0, err
 	}
 
-	q, chatID := database.Query{
+	q := database.Query{
 		Name:     "chatsRepository.Create",
 		QueryRaw: query,
-	}, int64(0)
+	}
+
+	var chatID int64
 
 	err = c.dbClient.Database().QueryRowContext(ctx, q, args...).Scan(&chatID)
 	if err != nil {
