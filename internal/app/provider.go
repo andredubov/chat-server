@@ -35,6 +35,7 @@ func newServiceProvider() *serviceProvider {
 	return &serviceProvider{}
 }
 
+// PostgresConfig loads postgres config from an appropriate enviroment variables
 func (s *serviceProvider) PostgresConfig() config.PostgresConfig {
 	if s.postgresConfig == nil {
 		cfg, err := env.NewPostgresConfig()
@@ -48,6 +49,7 @@ func (s *serviceProvider) PostgresConfig() config.PostgresConfig {
 	return s.postgresConfig
 }
 
+// GRPCConfig loads grpc server config from an appropriate enviroment variables
 func (s *serviceProvider) GRPCConfig() config.GRPCConfig {
 	if s.grpcConfig == nil {
 		cfg, err := env.NewGRPCConfig()
@@ -61,6 +63,7 @@ func (s *serviceProvider) GRPCConfig() config.GRPCConfig {
 	return s.grpcConfig
 }
 
+// DatabaseClient creates a database client
 func (s *serviceProvider) DatabaseClient(ctx context.Context) database.Client {
 	if s.databaseClient == nil {
 		dbClient, err := postgresClient.New(ctx, s.PostgresConfig().DSN())
@@ -83,6 +86,7 @@ func (s *serviceProvider) DatabaseClient(ctx context.Context) database.Client {
 	return s.databaseClient
 }
 
+// TxManager creates an instance of a transaction manager
 func (s *serviceProvider) TxManager(ctx context.Context) database.TxManager {
 	if s.databaseTxManager == nil {
 		db := s.DatabaseClient(ctx).Database()
@@ -92,6 +96,7 @@ func (s *serviceProvider) TxManager(ctx context.Context) database.TxManager {
 	return s.databaseTxManager
 }
 
+// ChatsRepository creates an insanse of a chata repository
 func (s *serviceProvider) ChatsRepository(ctx context.Context) repository.Chats {
 	if s.chatsRepository == nil {
 		dbClient := s.DatabaseClient(ctx)
@@ -101,6 +106,7 @@ func (s *serviceProvider) ChatsRepository(ctx context.Context) repository.Chats 
 	return s.chatsRepository
 }
 
+// MessagesRepository creates an instance of messages repository
 func (s *serviceProvider) MessagesRepository(ctx context.Context) repository.Messages {
 	if s.messagesRepository == nil {
 		dbClient := s.DatabaseClient(ctx)
@@ -110,6 +116,7 @@ func (s *serviceProvider) MessagesRepository(ctx context.Context) repository.Mes
 	return s.messagesRepository
 }
 
+// ParticipantsRepository creates an instance of a participants repository
 func (s *serviceProvider) ParticipantsRepository(ctx context.Context) repository.Participants {
 	if s.participantsRepository == nil {
 		dbClient := s.DatabaseClient(ctx)
@@ -119,6 +126,7 @@ func (s *serviceProvider) ParticipantsRepository(ctx context.Context) repository
 	return s.participantsRepository
 }
 
+// ChatsService creates an instance of chats service
 func (s *serviceProvider) ChatsService(ctx context.Context) service.Chats {
 	if s.chatsService == nil {
 		s.chatsService = chat.NewService(
@@ -132,6 +140,7 @@ func (s *serviceProvider) ChatsService(ctx context.Context) service.Chats {
 	return s.chatsService
 }
 
+// ServerImplementation creates an instance of grpc server implementation
 func (s *serviceProvider) ServerImplementation(ctx context.Context) *server.Implementation {
 	if s.serverImplementation == nil {
 		chatsService := s.ChatsService(ctx)

@@ -13,11 +13,13 @@ import (
 	"google.golang.org/grpc/reflection"
 )
 
+// App ...
 type App struct {
 	serviceProvider *serviceProvider
 	grpcServer      *grpc.Server
 }
 
+// NewApp create a new instance of App struct
 func NewApp(ctx context.Context) (*App, error) {
 	application := &App{}
 
@@ -28,6 +30,7 @@ func NewApp(ctx context.Context) (*App, error) {
 	return application, nil
 }
 
+// Run launches the application
 func (a *App) Run() error {
 	defer func() {
 		closer.CloseAll()
