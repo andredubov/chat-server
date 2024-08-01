@@ -6,6 +6,7 @@ import (
 	"github.com/andredubov/chat-server/internal/service/model"
 )
 
+// Create is used to create a new chat
 func (c *chatsService) Create(ctx context.Context, chat model.Chat) (int64, error) {
 	var chatID int64
 	err := c.txManager.ReadCommitted(ctx, func(ctx context.Context) (errTx error) {
