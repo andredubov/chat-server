@@ -9,6 +9,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
+// SendMessage creates a new message in a chat
 func (c *Implementation) SendMessage(ctx context.Context, r *chat_v1.SendMessageRequest) (*chat_v1.SendMessageResponse, error) {
 	messageID, err := c.chatsService.SendMessage(ctx, converter.ToMessageFromSendMessageRequest(r))
 	if err != nil {

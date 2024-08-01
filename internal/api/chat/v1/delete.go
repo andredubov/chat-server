@@ -9,6 +9,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
+// Delete is user to delete a chat
 func (c *Implementation) Delete(ctx context.Context, r *chat_v1.DeleteRequest) (*empty.Empty, error) {
 	_, err := c.chatsService.Delete(ctx, r.GetId())
 	if err != nil {

@@ -9,6 +9,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
+// Create is used to create a chat
 func (c *Implementation) Create(ctx context.Context, r *chat_v1.CreateRequest) (*chat_v1.CreateResponse, error) {
 	if r.GetName() == "" {
 		return nil, status.Error(codes.InvalidArgument, "chat name cannot be empty")
