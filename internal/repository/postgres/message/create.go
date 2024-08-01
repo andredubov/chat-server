@@ -21,10 +21,12 @@ func (m *messagesRepository) Create(ctx context.Context, message model.Message) 
 		return 0, err
 	}
 
-	q, messageID := database.Query{
+	q := database.Query{
 		Name:     "messagesRepository.Create",
 		QueryRaw: query,
-	}, int64(0)
+	}
+
+	var messageID int64
 
 	err = m.dbClient.Database().QueryRowContext(ctx, q, args...).Scan(&messageID)
 	if err != nil {
