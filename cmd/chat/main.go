@@ -1,63 +1,22 @@
 package main
 
 import (
+	"context"
 	"log"
-	"net"
 
-	"github.com/andredubov/chat-server/internal/config"
-	"github.com/andredubov/chat-server/internal/config/env"
-	"github.com/andredubov/chat-server/internal/repository/postgres"
-	server "github.com/andredubov/chat-server/internal/transport/grpc/chat/v1"
-	chat_v1 "github.com/andredubov/chat-server/pkg/chat/v1"
-	"github.com/andredubov/chat-server/pkg/database"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/reflection"
+	"github.com/andredubov/chat-server/internal/app"
 )
 
 func main() {
-	err := config.Load()
+	ctx := context.Background()
+
+	application, err := app.NewApp(ctx)
 	if err != nil {
-		log.Fatalf("failed to load config: %v", err)
+		log.Fatalf("failed to init app: %s", err.Error())
 	}
 
-	grpcConfig, err := env.NewGRPCConfig()
+	err = application.Run()
 	if err != nil {
-		log.Fatalf("failed to get grpc config: %v", err)
-	}
-
-	postgresConfig, err := env.NewPostgresConfig()
-	if err != nil {
-		log.Fatalf("failed to get postgres config: %v", err)
-	}
-
-	connection, err := database.NewPostgresConnection(postgresConfig)
-	if err != nil {
-		log.Fatalf("failed to get postgres connection: %v", err)
-	}
-	defer connection.Close()
-
-	chatsRepository := postgres.NewChatsRepository(connection)
-	messagesRepository := postgres.NewMessagesRepository(connection)
-	chatParticipantsRepository := postgres.NewParticipantsRepository(connection)
-
-	listen, err := net.Listen("tcp", grpcConfig.Address())
-	if err != nil {
-		log.Fatalf("failed to listen: %v", err)
-	}
-
-	chatServer := server.NewChatServer(
-		chatsRepository,
-		messagesRepository,
-		chatParticipantsRepository,
-	)
-
-	s := grpc.NewServer()
-	reflection.Register(s)
-	chat_v1.RegisterChatServer(s, chatServer)
-
-	log.Printf("server listening at %v", listen.Addr())
-
-	if err = s.Serve(listen); err != nil {
-		log.Fatalf("failed to serve: %v", err)
+		log.Fatalf("failed to run app: %s", err.Error())
 	}
 }
