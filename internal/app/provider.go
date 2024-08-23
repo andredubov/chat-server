@@ -5,18 +5,18 @@ import (
 	"log"
 
 	server "github.com/andredubov/chat-server/internal/api/chat/v1"
-	"github.com/andredubov/chat-server/internal/client/database"
-	postgresClient "github.com/andredubov/chat-server/internal/client/database/postgres"
-	"github.com/andredubov/chat-server/internal/client/database/transaction"
-	"github.com/andredubov/chat-server/internal/closer"
-	"github.com/andredubov/chat-server/internal/config"
-	"github.com/andredubov/chat-server/internal/config/env"
 	"github.com/andredubov/chat-server/internal/repository"
-	chatsRepo "github.com/andredubov/chat-server/internal/repository/postgres/chat"
-	messagesRepo "github.com/andredubov/chat-server/internal/repository/postgres/message"
-	participantRepo "github.com/andredubov/chat-server/internal/repository/postgres/participant"
+	chatsRepo "github.com/andredubov/chat-server/internal/repository/chat/postgres"
+	messagesRepo "github.com/andredubov/chat-server/internal/repository/message/postgres"
+	participantRepo "github.com/andredubov/chat-server/internal/repository/participant/postgres"
 	"github.com/andredubov/chat-server/internal/service"
 	"github.com/andredubov/chat-server/internal/service/chat"
+	"github.com/andredubov/golibs/pkg/client/database"
+	postgresClient "github.com/andredubov/golibs/pkg/client/database/postgres"
+	"github.com/andredubov/golibs/pkg/client/database/transaction"
+	"github.com/andredubov/golibs/pkg/closer"
+	"github.com/andredubov/golibs/pkg/config"
+	"github.com/andredubov/golibs/pkg/config/env"
 )
 
 type serviceProvider struct {
