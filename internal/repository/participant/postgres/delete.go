@@ -4,7 +4,7 @@ import (
 	"context"
 
 	sq "github.com/Masterminds/squirrel"
-	"github.com/andredubov/chat-server/internal/client/database"
+	"github.com/andredubov/golibs/pkg/client/database"
 )
 
 // Delete is used to deletes a chat participants in the appropriate repository

@@ -1,8 +1,8 @@
 package postgres
 
 import (
-	"github.com/andredubov/chat-server/internal/client/database"
 	"github.com/andredubov/chat-server/internal/repository"
+	"github.com/andredubov/golibs/pkg/client/database"
 )
 
 const (
