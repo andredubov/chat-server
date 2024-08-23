@@ -31,7 +31,7 @@ func TestCreateChat(t *testing.T) {
 	var (
 		ctx  = context.Background()
 		mc   = minimock.NewController(t)
-		id   = int64(7)
+		id   = gofakeit.Int64()
 		ids  = []int64{2, 3, 4}
 		name = gofakeit.Name()
 
@@ -179,5 +179,4 @@ func TestCreateChat(t *testing.T) {
 			require.Equal(t, tt.want, newID)
 		})
 	}
-
 }
