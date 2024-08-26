@@ -76,7 +76,6 @@ func TestCreateChat(t *testing.T) {
 				return mock
 			},
 		},
-
 		{
 			name: "empty chat name",
 			args: args{
