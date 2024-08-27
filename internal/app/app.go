@@ -5,9 +5,9 @@ import (
 	"log"
 	"net"
 
-	"github.com/andredubov/chat-server/internal/closer"
-	"github.com/andredubov/chat-server/internal/config"
 	chat_v1 "github.com/andredubov/chat-server/pkg/chat/v1"
+	"github.com/andredubov/golibs/pkg/closer"
+	"github.com/andredubov/golibs/pkg/config"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/reflection"

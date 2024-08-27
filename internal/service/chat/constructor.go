@@ -1,9 +1,9 @@
 package chat
 
 import (
-	"github.com/andredubov/chat-server/internal/client/database"
 	"github.com/andredubov/chat-server/internal/repository"
 	"github.com/andredubov/chat-server/internal/service"
+	"github.com/andredubov/golibs/pkg/client/database"
 )
 
 type chatsService struct {

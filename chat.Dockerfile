@@ -1,4 +1,4 @@
-FROM golang:1.22.3-alpine AS builder
+FROM golang:1.22.5-alpine AS builder
 
 COPY . /github.com/andredubov/chat
 WORKDIR /github.com/andredubov/chat

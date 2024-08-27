@@ -4,8 +4,8 @@ import (
 	"context"
 
 	sq "github.com/Masterminds/squirrel"
-	"github.com/andredubov/chat-server/internal/client/database"
 	"github.com/andredubov/chat-server/internal/service/model"
+	"github.com/andredubov/golibs/pkg/client/database"
 )
 
 // Create is used to creates a new chat participants in the appropriate repository
